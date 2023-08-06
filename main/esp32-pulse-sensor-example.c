@@ -6,6 +6,7 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include <stdio.h>
+#include <assert.h>
 
 static const char *TAG = "pulse-sensor-example";
 static QueueHandle_t pulse_sensor_notifications_queue;
@@ -52,17 +53,11 @@ static void pulse_sensor_totals_reporter(void *args)
 void app_main(void)
 {
     pulse_sensor_notifications_queue = xQueueCreate(10, sizeof(pulse_sensor_notification_t));
-    if (!pulse_sensor_notifications_queue)
-    {
-        // handle error
-    }
+    assert(pulse_sensor_notifications_queue != NULL);
     BaseType_t r = xTaskCreate(pulse_sensor_notifications_consumer,
                                "pulse sensor notification consumer task",
                                2048, NULL, 1, NULL);
-    if (r != pdPASS)
-    {
-        // handle error
-    }
+    assert(r == pdPASS);
 
     ESP_ERROR_CHECK(gpio_install_isr_service(0));
     pulse_sensor_config_t pulse_sensor_config = {
@@ -75,8 +70,5 @@ void app_main(void)
     r = xTaskCreate(pulse_sensor_totals_reporter,
                     "pulse sensor totals reporter task",
                     2048, (void *)pulse_sensor, 1, NULL);
-    if (r != pdPASS)
-    {
-        // handle error
-    }
+    assert(r == pdPASS);
 }
