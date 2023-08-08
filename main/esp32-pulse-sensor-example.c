@@ -72,6 +72,9 @@ static void pulse_sensor_rate_reporter(void *args)
 
 void app_main(void)
 {
+    // To debug, use 'make menuconfig' to set default Log level to DEBUG, then uncomment:
+    //esp_log_level_set("pulse-sensor", ESP_LOG_DEBUG);
+
     pulse_sensor_notifications_queue = xQueueCreate(10, sizeof(pulse_sensor_notification_t));
     assert(pulse_sensor_notifications_queue != NULL);
 
